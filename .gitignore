@@ -1,4 +1,12 @@
+db/data/*
+db/import/*
+db/neo4j/*
+.idea
+server_id
+store_lock
+__pycache__/
+utils/
+*.dump
+*.pyc
 .venv/
 *.zip
-__pycache__/
-db/
