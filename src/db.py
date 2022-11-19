@@ -19,7 +19,7 @@ class Db:
     
     def return_data_by_name(self, name) -> list:
         query =  '''MATCH (a:Officer {name:$name})-[r:officer_of|intermediary_of|registered_address*..10]-(b)
-        RETURN b.name as name LIMIT 100'''
+        RETURN b.name as name LIMIT 20'''
         
         results =  self.session.read_transaction(self._query_run, query=query,name=name)
         

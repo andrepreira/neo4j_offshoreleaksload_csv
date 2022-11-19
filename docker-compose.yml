@@ -1,5 +1,11 @@
 version: '3'
 services:
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    ports: ["9999:8080"]
     
   neo4j:
     image: neo4j:4.4.12-community
@@ -18,7 +24,6 @@ services:
     environment:
       NEO4J_AUTH: neo4j/5692132
       NEO4J_dbms_directories_import: import
-      NEO4J_dbms_security_allow__csv__import__from__file__urls: true
       TZ: 'America/Sao_Paulo'
       NEO4J_dbms_memory_heap_initial__size: 3G
       NEO4J_dbms_memory_heap_max__size: 3G
@@ -35,3 +40,22 @@ services:
       FLASK_DEBUG: 1
     depends_on:
       - neo4j
+
+  psql:
+    image: postgres:13
+    restart: always
+    environment:
+      PGDATA: /data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "Postgres2019!"
+    ports: ["5420:5432"]
+    volumes: ["/.psql/bd:/data"]
+
+  pgadmin:
+      image: dpage/pgadmin4
+      environment:
+          PGADMIN_DEFAULT_EMAIL: "teste@teste.com.br"
+          PGADMIN_DEFAULT_PASSWORD: "PgAdmin2019!"
+      restart: always
+      ports: ["16453:80"]
+      depends_on: ["psql"] 
