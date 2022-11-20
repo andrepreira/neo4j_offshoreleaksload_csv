@@ -4,7 +4,7 @@ sudo docker-compose up -d --build neo4j
 
 sudo chmod -R 777 ./db
 
-ls ./db/data
+ls ./db/data/databases
 
 wget -P ./db/data 'https://github.com/ICIJ/offshoreleaks-data-packages/raw/main/data/icij-offshoreleaks-44.dump'
 

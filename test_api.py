@@ -57,40 +57,43 @@ def busca_nomes_socios_csv(path: str) -> list:
             nomes.append(nome)
     return nomes
     
-def busca_dados_socios_na_base_offshores(conn, nome_base='csv', n_socios=None) ->List[dict]:
+def busca_dados_socios_na_base_offshores(nome_base='csv', n_socios=None) ->List[dict]:
     base_psql = False
     print('Iniciando busca..')
     if nome_base == 'csv':
         socios = busca_nomes_socios_csv('./socios_cnpj.csv')
     elif nome_base == 'psql':
         base_psql = True
+        conn = postgres_conn()
         socios = busca_nomes_socios_postgresql(conn, n_socios)
     else:
         raise Exception('Base incorreta, escolha a nome_base= psql ou csv')
     
     retorno = []
     cont_resp = 0
+    print(type(n_socios))
     for socio in socios:
+        if type(n_socios) == int and cont_resp == n_socios:
+            break
         res, status_code = buscar_dados_com_api(socio)
         if status_code == 400 or len(res) == 0:
             continue
         
         if base_psql:
             print('sócio da base psql com dados offshores ',socio)
-            cont_resp+=1
             retorno.append({'socio': socio, 'dados': res})
-            if cont_resp == 5:
+            if cont_resp == n_socios:
                 print(f'{cont_resp} primeiros resultados encontrados')
                 break
         elif not base_psql:
             retorno.append({'socio': socio, 'dados': res})
-        del res    
+        del res
+   
+        cont_resp+=1
     return retorno
 if __name__ == '__main__':
     
     
-    pg_conn = postgres_conn()
-        
     # testando query neo4j
     # print('testando query neo4j')
     # buscar_dados_com_neo4j('JOSE FLAKSBERG')
@@ -102,12 +105,14 @@ if __name__ == '__main__':
     #     res, _ = buscar_dados_com_api(socio)
     #     print(res)
         
-    ret = busca_dados_socios_na_base_offshores(pg_conn, 'psql')
+    ret = busca_dados_socios_na_base_offshores('csv', n_socios=5)
     print('-----------Lista sócios------------------')
-    for dict_ret in ret:
-        print(dict_ret['socio'])
+    # for dict_ret in ret:
+    #     print(dict_ret['socio'])
         
     print('-----------Lista dados encontrados------------------')
-    for dict_ret in ret:
-        print(dict_ret['dados'])
+    with open('./resultados.txt', 'w') as f:
+        for dict_ret in ret:
+            # print(dict_ret['dados'])
+            f.write(str(dict_ret['dados'])+'\n')
     
