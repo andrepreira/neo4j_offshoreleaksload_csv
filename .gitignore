@@ -1,6 +1,4 @@
-db/data/*
-db/import/*
-db/neo4j/*
+db/
 .idea
 server_id
 store_lock
