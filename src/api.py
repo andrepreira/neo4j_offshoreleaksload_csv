@@ -1,7 +1,6 @@
 import os
 from flask import Flask, request
 from flask_restful import Resource, Api
-from chassi_ms.api import criar_app_e_api, adicionar_recursos_na_api
 
 try:
     from src.db import Db

@@ -18,8 +18,18 @@ class Db:
         return tx.run(query, **kwargs).data()
     
     def return_data_by_name(self, name) -> list:
-        query =  '''MATCH (a:Officer {name:$name})-[r:officer_of|intermediary_of|registered_address*..10]-(b)
-        RETURN b.name as name LIMIT 20'''
+        query =  '''MATCH p = (a:Officer {name:$name})-[r]-(b)
+        RETURN
+        a.name as socio_investigado,  
+        r.link as relacionamento,
+        b.name as nome, 
+        b.original_name as nome_orinal,
+        b.address as endereco,
+        b.countries as pais,
+        b.country_codes as codigo_pais,
+        b.sourceID as sourceID,
+        b.jurisdiction_description as jurisdicao,
+        b.lastEditTimestamp as timestamp_ultima_edicao'''
         
         results =  self.session.read_transaction(self._query_run, query=query,name=name)
         
